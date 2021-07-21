@@ -1,9 +1,10 @@
 const express = require('express')
 const CryptoJS = require('crypto-js') // Standard JavaScript cryptography library
 const fetch = require('node-fetch') // "Fetch" HTTP req library
+require('dotenv').config() // library for hiding API keys
 
-const apiKey = 'JaYlHTEDnQkZOkejaRj7oUnRmcfCAcsEAWKzBDG4Gnd'
-const apiSecret = 'I3yHTkEBFOYGwPTxjvysQpFUny5r7wj2a3WjFj5zwin'
+const apiKey = process.env.APIKEY
+const apiSecret = process.env.APISECRET
 
 const apiPath = 'v2/auth/w/order/submit'// путь для выставлпения ордера
 
@@ -11,7 +12,7 @@ const apiPathCancel = 'v2/auth/w/order/cancel' // путь для закрыти
 
 
 // изменять под проброшенный порт своего роутера + Настройки в методе SendSignal MTA
-const PORT = process.env.PORT ?? 8887
+const PORT = process.env.PORT
 const app = express()
 
 
