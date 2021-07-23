@@ -6,10 +6,11 @@ require('dotenv').config() // library for hiding API keys
 const apiKey = process.env.APIKEY
 const apiSecret = process.env.APISECRET
 
-const apiPath = 'v2/auth/w/order/submit'// путь для выставлпения ордера
+const apiPathSubmit = 'v2/auth/w/order/submit'// путь для выставлпения ордера
 
 const apiPathCancel = 'v2/auth/w/order/cancel' // путь для закрытия ордера
 
+const apiPathWallet = "v2/auth/r/wallets"
 
 // изменять под проброшенный порт своего роутера + Настройки в методе SendSignal MTA
 const PORT = process.env.PORT
@@ -35,11 +36,11 @@ app.post('/submit', (req, res) => {
         }
         console.log('body: ', body);
 
-        let signature = `/api/${apiPath}${nonce}${JSON.stringify(body)}`
+        let signature = `/api/${apiPathSubmit}${nonce}${JSON.stringify(body)}`
         const sig = CryptoJS.HmacSHA384(signature, apiSecret).toString()
 
 
-        fetch(`https://api.bitfinex.com/${apiPath}`, {
+        fetch(`https://api.bitfinex.com/${apiPathSubmit}`, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: {
@@ -50,7 +51,6 @@ app.post('/submit', (req, res) => {
             }
         })
             .then(res => res.json())
-            // .then(json => console.log(json)) //Logs the response body информация возвращаемая биржей
             .then(json => res.end(Buffer.from(JSON.stringify(json)))) // !!!!Возращает
         .catch(err => {
             console.log(err)
@@ -93,13 +93,41 @@ app.post('/cancel', (req, res) => {
             }
         })
             .then(res => res.json())
-            // .then(json => console.log(json)) //Logs the response body информация возвращаемая биржей
             .then(json => res.end(Buffer.from(JSON.stringify(json)))) // !!!!Возращает
             .catch(err => {
                 console.log(err)
             })
 
     });
+})
+
+
+// wallet
+app.post('/wallet', (req, res) => {
+
+    const nonce = (Date.now() * 1000).toString();
+    const body = {
+    }
+
+    let signature = `/api/${apiPathWallet}${nonce}${JSON.stringify(body)}`
+    const sig = CryptoJS.HmacSHA384(signature, apiSecret).toString()
+
+    fetch(`https://api.bitfinex.com/${apiPathWallet}`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: {
+            /* auth headers */
+            'Content-Type': 'application/json',
+            'bfx-nonce': nonce,
+            'bfx-apikey': apiKey,
+            'bfx-signature': sig
+        }
+    })
+        .then(res => res.json())
+        .then(json => res.end(Buffer.from(JSON.stringify(json)))) // Возврат данных с биржи
+        .catch(err => {
+            console.log(err)
+        })
 })
 
 app.listen(PORT, '0.0.0.0', () => {
