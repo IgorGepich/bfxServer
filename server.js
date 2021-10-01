@@ -22,15 +22,16 @@ app.post('/submit', (req, res) => {
     req.on('data', chunk => {
         postBodyRequest += chunk.toString();
     });
+
     req.on('end', ()=>{
         const params = JSON.parse(postBodyRequest);
         console.log('params: ', params);
-        let dop = params.type;
+        let orderType = params.type;
         let pair = params.pair;
-        let amount = params.bc;
+        let amount = params.vol;
         const nonce = (Date.now() * 1000).toString();
         const body = {
-            type: dop,
+            type: orderType,
             symbol: pair,
             amount: amount
         }
@@ -52,6 +53,7 @@ app.post('/submit', (req, res) => {
         })
             .then(res => res.json())
             .then(json => res.end(Buffer.from(JSON.stringify(json)))) // !!!!Возращает
+            .then(json => console.log(json))
         .catch(err => {
             console.log(err)
         })
