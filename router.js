@@ -1,61 +1,61 @@
 const express = require('express')
 const fetch = require('node-fetch')
+require('dotenv').config() // configuring file .env
 
-const router = express()
-const PORT = '3000'
+const app = express()
+const PORT = process.env.PORT
 
-const mtaDev = 'https://script.google.com/macros/s/AKfycbwLDF29Grj_2Mn8EsZ0W9OGG9gCDe8zb1g6XOrxLGhKvuNJDfgDHwsaKGqHYqPxGvlgsA/exec?action=directDealUpdate'
+const mtaRoutes = [process.env.mtaDev, process.env.mtaReal, process.env.raspiLocal]
 
-router.post('/', (req, res) => {
+app.post('/', (req, res) => {
 
-    let chunks = [];
+    let chunks = []
     let url = req.headers.host
     console.log(url)
-    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
     console.log(fullUrl)
     const parts = fullUrl.split('/')
     console.log(parts)
-    let a = parts[2]
-    console.log(a)
+    let targetUrl = parts[2]
+    console.log(targetUrl)
 
     req.on('data', function(data) {
-        chunks.push(data);
+        chunks.push(data)
+
     })
         .on('end', function() {
-        const data   = Buffer.concat(chunks);
-        const reqBody = JSON.parse(data);
+        const data   = Buffer.concat(chunks)
+        const reqBody = JSON.parse(data)
         console.log(reqBody)
-            // resendPostMethod()
-
+            switch (targetUrl){
+                case 'localhost:3000':
+                    resendPostMethod(reqBody);
+                    res.status(200).send('localhost:3000')
+                    break;
+                case '10.0.1.2:3000':
+                    console.log('Another URL Address');
+                    res.status(200).send('10.0.1.2:3000')
+                    break;
+            }
     });
-    function d(){
-        res.redirect(307, 'http://10.0.1.4:3001')
-        res.redirect(307, mtaDev)
-    }
-
-    d();
 });
 
-
-function resendPostMethod() {
-    console.log('это работает')
-    let body = {
-        "type": "LIMIT",
-        "pair": "tTESTBTC:TESTUSD",
-        "vol": "0.01"
+function resendPostMethod(reqBody) {
+    for(let i in mtaRoutes){
+        let mta = mtaRoutes[i]
+        console.log(mta)
+            fetch(mta, {
+                method: 'POST',
+                body: JSON.stringify(reqBody),
+                headers: {
+                /* auth headers */
+                'Content-Type': 'application/json',
+                }
+            })
     }
-    fetch(`http://10.0.1.4:3001`, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            /* auth headers */
-            'Content-Type': 'application/json',
-
-        }
-
-    })
 }
-router.listen(PORT,() => {
+
+app.listen(PORT,() => {
     console.log('Server has been started on port', + PORT, '...')
 })
 

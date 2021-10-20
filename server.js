@@ -18,24 +18,24 @@ const app = express()
 
 
 app.post('/submit', (req, res) => {
-    let postBodyRequest = '';
+    let postBodyRequest = ''
     req.on('data', chunk => {
-        postBodyRequest += chunk.toString();
+        postBodyRequest += chunk.toString()
     });
 
     req.on('end', ()=>{
-        const params = JSON.parse(postBodyRequest);
-        console.log('params: ', params);
-        let orderType = params.type;
-        let pair = params.pair;
-        let amount = params.vol;
-        const nonce = (Date.now() * 1000).toString();
+        const params = JSON.parse(postBodyRequest)
+        console.log('params: ', params)
+        let orderType = params.type
+        let pair = params.pair
+        let amount = params.vol
+        const nonce = (Date.now() * 1000).toString()
         const body = {
             type: orderType,
             symbol: pair,
             amount: amount
         }
-        console.log('body: ', body);
+        console.log('body: ', body)
 
         let signature = `/api/${apiPathSubmit}${nonce}${JSON.stringify(body)}`
         const sig = CryptoJS.HmacSHA384(signature, apiSecret).toString()
@@ -58,7 +58,7 @@ app.post('/submit', (req, res) => {
             console.log(err)
         })
 
-    });
+    })
 })
 
 
@@ -66,19 +66,19 @@ app.post('/submit', (req, res) => {
 // на данном этапе не используется
 // order cancel
 app.post('/cancel', (req, res) => {
-    let postBodyRequest = '';
+    let postBodyRequest = ''
     req.on('data', chunk => {
-        postBodyRequest += chunk.toString();
+        postBodyRequest += chunk.toString()
     });
     req.on('end', ()=>{
-        const params = JSON.parse(postBodyRequest);
+        const params = JSON.parse(postBodyRequest)
         console.log('params: ', params);
         let id = params.id
-        const nonce = (Date.now() * 1000).toString();
+        const nonce = (Date.now() * 1000).toString()
         const body = {
             id: id
         }
-        console.log('body: ', body);
+        console.log('body: ', body)
 
         let signature = `/api/${apiPathCancel}${nonce}${JSON.stringify(body)}`
         const sig = CryptoJS.HmacSHA384(signature, apiSecret).toString()
@@ -105,9 +105,11 @@ app.post('/cancel', (req, res) => {
 
 
 // wallet
+
+
 app.post('/wallet', (req, res) => {
 
-    const nonce = (Date.now() * 1000).toString();
+    const nonce = (Date.now() * 1000).toString()
     const body = {
     }
 
@@ -131,7 +133,6 @@ app.post('/wallet', (req, res) => {
             console.log(err)
         })
 })
-
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT,() => {
     console.log('Server has been started on port', + PORT, '...')
 })

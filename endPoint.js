@@ -17,7 +17,6 @@ app.post('/', (req, res) => {
             console.log(JSON.stringify(schema))
             console.log(schema.type)
         });
-    // res.status(200).end();
     res.send('End point')
 });
 
