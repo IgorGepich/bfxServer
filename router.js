@@ -5,7 +5,7 @@ require('dotenv').config() // configuring file .env
 const app = express()
 const PORT = process.env.PORT
 
-const mtaRoutes = [process.env.mtaDev, process.env.mtaReal, process.env.raspiLocal]
+const mtaRoutes = [process.env.MTADEV, process.env.MTAREAL, process.env.RASPILOCAL]
 
 app.post('/', (req, res) => {
 
