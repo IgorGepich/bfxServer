@@ -3,9 +3,9 @@ const fetch = require('node-fetch')
 require('dotenv').config() // configuring file .env
 
 const app = express()
-const PORT = process.env.PORT
+const ROUTER_PORT = process.env.ROUTER_PORT
 
-const mtaRoutes = [process.env.MTADEVSI, process.env.MTAREAL, process.env.RASPILOCAL]
+const mtaRoutes = [process.env.MTADEVSI, process.env.MTAREAL]
 
 // const log4js = require("log4js");
 // const log = require('./loggingConf');
@@ -53,16 +53,16 @@ app.post('/', (req, res) => {
         const data = Buffer.concat(chunks)
         const reqBody = JSON.parse(data)
         console.log(reqBody)
-            for (let i in chunks) {console.log(' ', chunks[i])}
+            // for (let i in chunks) {console.log(' ', chunks[i])}
 
             switch (targetUrl){
                 case 'localhost:3000':
                     resendPostMethod(reqBody);
                     res.status(200).send('localhost:3000')
                     break;
-                case '10.0.1.2:3000':
-                    console.log('Another URL Address');
-                    res.status(200).send('10.0.1.2:3000')
+                default:
+                    resendPostMethod(reqBody)
+                    res.status(200).send('From postman external')
                     break;
             }
     });
@@ -83,8 +83,8 @@ function resendPostMethod(reqBody) {
     }
 }
 
-app.listen(PORT,() => {
-    console.log('Server has been started on port', + PORT, '...')
+app.listen(ROUTER_PORT,() => {
+    console.log('Server has been started on port', + ROUTER_PORT, '...')
 })
 
 

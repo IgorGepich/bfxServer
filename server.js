@@ -13,7 +13,7 @@ const apiPathCancel = 'v2/auth/w/order/cancel' // путь для закрыти
 const apiPathWallet = "v2/auth/r/wallets"
 
 // изменять под проброшенный порт своего роутера + Настройки в методе SendSignal MTA
-const PORT = process.env.PORT
+const SERVER_PORT = process.env.SERVER_PORT
 const app = express()
 
 
@@ -133,6 +133,6 @@ app.post('/wallet', (req, res) => {
             console.log(err)
         })
 })
-app.listen(PORT,() => {
-    console.log('Server has been started on port', + PORT, '...')
+app.listen(SERVER_PORT,() => {
+    console.log('Server has been started on port', + SERVER_PORT, '...')
 })
