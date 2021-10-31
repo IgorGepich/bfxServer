@@ -5,7 +5,8 @@ require('dotenv').config() // configuring file .env
 const app = express()
 const ROUTER_PORT = process.env.ROUTER_PORT
 
-const mtaRoutes = [process.env.MTADEVSI, process.env.MTAREAL]
+//const mtaRoutes = [process.env.MTADEVSI, process.env.MTAREAL]
+const mtaRoutes = [process.env.MTADEVSI]
 
 // const log4js = require("log4js");
 // const log = require('./loggingConf');
